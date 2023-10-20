@@ -10,9 +10,12 @@ df_test_transformed = load('data/df_test_transformed.pkl')
 forecast_df2 = load('data/forecast_df1.pkl')
 historical2 = load('data/historical1.pkl')
 df_test_transformed2 = load('data/df_test_transformed1.pkl')
+forecast_df3 = load('data/forecast_df_3.pkl')
+historical3 = load('data/historical_3.pkl')
+df_test_transformed3 = load('data/df_test_transformed_3.pkl')
 
-print(df_test_transformed2.head())
-print(forecast_df2.head())
+print('3', df_test_transformed.tail())
+print('5', forecast_df3.tail())
 
 
 
@@ -24,7 +27,7 @@ def register_callbacks(app):
         [Input('forecast-graph-1', 'id'),
          Input('year-dropdown', 'value')]
     )
-    def update_graph_1(_, selected_year):
+    def update_graph_1(_, selected_year):   
          # Si se seleccionó 'all', no filtrar datos
         if selected_year == 'all':
             filtered_historical = historical
@@ -39,13 +42,25 @@ def register_callbacks(app):
         fig1 = go.Figure()
 
         fig1.add_trace(go.Scatter(x=filtered_historical.index, y=filtered_historical.values,
-                                  mode='lines', name='Datos historicos', line=dict(color='green')))
+                                  mode='lines', name='Datos historicos', line=dict(color='#4f738e')))
         fig1.add_trace(go.Scatter(x=filtered_forecast.index, y=filtered_forecast['Forecast'].values,
-                                  mode='lines', name='Prediccion', line=dict(color='red')))
+                                  mode='lines', name='Prediccion', line=dict(color='blue')))
         fig1.add_trace(go.Scatter(x=filtered_test.index, y=filtered_test.values,
-                                  mode='lines', name='Valores reales', line=dict(color='blue')))
+                                  mode='lines', name='Valores reales', line=dict(color='#283a47')))
 
-        fig1.update_layout(title='Predicción de Importación de Gasolina Regular', xaxis_title='Date', yaxis_title='Importaciones de gasolina regular')
+        fig1.update_layout(
+        title='Predicción de Importación de Gasolina Regular',
+        xaxis_title='Date',
+        yaxis_title='Importaciones de gasolina regular',
+        legend=dict(
+            x=0.5,
+            y=1.1,
+            xanchor='center',
+            orientation='h'
+        ),
+            margin=dict(l=5, r=5),
+            width=600
+            )
         
         return fig1
 
@@ -69,10 +84,52 @@ def register_callbacks(app):
 
         fig2 = go.Figure()
 
-        fig2.add_trace(go.Scatter(x=filtered_historical2.index, y=filtered_historical2.values, mode='lines', name='Datos historicos', line=dict(color='green')))
-        fig2.add_trace(go.Scatter(x=filtered_forecast2.index, y=filtered_forecast2['Forecast'].values, mode='lines', name='Prediccion', line=dict(color='red')))
-        fig2.add_trace(go.Scatter(x=filtered_test2.index, y=filtered_test2["Diesel_conjunto"].values, mode='lines', name='Valores reales', line=dict(color='blue')))
+        fig2.add_trace(go.Scatter(x=filtered_historical2.index, y=filtered_historical2.values, mode='lines', name='Datos historicos', line=dict(color='#4f738e')))
+        fig2.add_trace(go.Scatter(x=filtered_forecast2.index, y=filtered_forecast2['Forecast'].values, mode='lines', name='Prediccion', line=dict(color='blue')))
+        fig2.add_trace(go.Scatter(x=filtered_test2.index, y=filtered_test2["Diesel_conjunto"].values, mode='lines', name='Valores reales', line=dict(color='#283a47')))
 
-        fig2.update_layout(title='Predicción del Consumo de Diesel', xaxis_title='Date', yaxis_title='Consumo de Diesel')
+        fig2.update_layout(title='Predicción del Consumo de Diesel', xaxis_title='Date', yaxis_title='Consumo de Diesel', legend=dict(
+            x=0.5,
+            y=1.1,
+            xanchor='center',
+            orientation='h'), 
+            margin=dict(l=5, r=5),
+            width=600
+            )
         
         return fig2
+
+    @app.callback(
+        Output('forecast-graph-3', 'figure'),
+        [Input('forecast-graph-3', 'id'),
+         Input('year-dropdown', 'value')]
+    )
+    def update_graph_3(_, selected_year):
+        # Si se seleccionó 'all', no filtrar datos
+        if selected_year == 'all':
+            filtered_historical3 = historical3
+            filtered_forecast3 = forecast_df3
+            filtered_test3 = df_test_transformed3
+        else:
+            # Filtrar datos por el año seleccionado
+            filtered_historical3 = historical3[historical3.index.year == selected_year]
+            filtered_forecast3 = forecast_df3[forecast_df3.index.year == selected_year]
+            filtered_test3 = df_test_transformed3[df_test_transformed3.index.year == selected_year]
+
+        fig3 = go.Figure()
+
+        fig3.add_trace(go.Scatter(x=filtered_historical3.index, y=filtered_historical3.values, mode='lines', name='Datos historicos', line=dict(color='#4f738e')))
+        fig3.add_trace(go.Scatter(x=filtered_forecast3.index, y=filtered_forecast3['Forecast'].values, mode='lines', name='Prediccion', line=dict(color='blue')))
+        fig3.add_trace(go.Scatter(x=filtered_test3.index, y=filtered_test3.values, mode='lines', name='Valores reales', line=dict(color='#283a47')))
+
+        fig3.update_layout(title='Predicción del Consumo Gasolina Superior', xaxis_title='Date', yaxis_title='Consumo de Superior', legend=dict(
+            x=0.5,
+            y=1.1,
+            xanchor='center',
+            orientation='h'
+        ),
+            margin=dict(l=5),
+            width=600
+            )
+        
+        return fig3
