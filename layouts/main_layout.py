@@ -13,5 +13,5 @@ main_layout = html.Div([
         dcc.Graph(id='forecast-graph-1', style={'margin-right': '20px'}),
         dcc.Graph(id='forecast-graph-2', style={'margin-right': '20px'}),
         dcc.Graph(id='forecast-graph-3'),
-    ], style={'display': 'flex', 'justifyContent': 'space-between'}),  # Flexbox CSS to make children appear side by side
+    ], style={'display': 'flex', 'justifyContent': 'space-between'}),
 ])
